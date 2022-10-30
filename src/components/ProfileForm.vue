@@ -91,7 +91,6 @@ export default {
         // if user only wants to update his/her name and desc
         this.updateUserInfo(false, null);
       }
-      console.log("log out");
     },
 
     updateUserInfo(isUrlPresent, downloadURL) {

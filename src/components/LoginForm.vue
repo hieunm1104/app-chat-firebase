@@ -53,26 +53,26 @@ export default {
           this.email,
           this.password
         );
+        console.log("a", res);
         if (res.user) {
-          await firebase
+          let querySnapshot = await firebase
             .firestore()
             .collection("users")
             .where("id", "==", res.user.uid)
-            .get()
-            .then((querySnapshot) => {
-              // console.log("query", querySnapshot);
-              querySnapshot.forEach((doc) => {
-                let userData = doc.data();
-                localStorage.setItem("uid", userData.id);
-                localStorage.setItem("name", userData.name);
-                localStorage.setItem("email", userData.email);
-                localStorage.setItem("password", userData.password);
-                localStorage.setItem("photoURL", userData.URL);
-                localStorage.setItem("description", userData.description);
-                localStorage.setItem("FirebaseDocumentId", doc.id);
-              });
-            });
-          this.$router.push("/chat");
+            .get();
+          console.log("query", querySnapshot);
+          querySnapshot.forEach((doc) => {
+            console.log("doc", doc);
+            let userData = doc.data();
+            localStorage.setItem("uid", res.user.uid);
+            localStorage.setItem("name", userData.name);
+            localStorage.setItem("email", userData.email);
+            localStorage.setItem("password", userData.password);
+            localStorage.setItem("photoURL", userData.URL);
+            localStorage.setItem("description", userData.description);
+            localStorage.setItem("FirebaseDocumentId", userData.id);
+            this.$router.push("/chat");
+          });
         }
       } catch (error) {
         console.log(error);

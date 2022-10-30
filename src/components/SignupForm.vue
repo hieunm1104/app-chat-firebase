@@ -22,7 +22,7 @@
           class="form-control mb-4"
           placeholder="Enter your password..."
         />
-        <router-link :to="{ path: '/' }">
+        <router-link :to="{ path: '/login' }">
           <h6 class="mb-3" style="font-weight: 600">Back to login</h6>
         </router-link>
         <button
@@ -40,7 +40,6 @@
 
 <script>
 import firebase from "../services/firebase";
-import Vue from "vue";
 export default {
   app: "SignUp",
   data() {
@@ -62,10 +61,15 @@ export default {
           name,
           email,
           password,
+          id: res.user.uid,
           URL: "",
           description: "",
         });
         localStorage.setItem("uid", res.user.uid);
+        localStorage.setItem("name", name);
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", password);
+        localStorage.setItem("FirebaseDocumentId", res.user.uid);
         this.name = "";
         this.email = "";
         this.password = "";

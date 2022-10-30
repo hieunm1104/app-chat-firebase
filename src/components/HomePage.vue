@@ -28,7 +28,7 @@
         </div>
       </div>
       <div>
-        <input type="text" v-model="inputComment" />
+        <input type="text" v-model="inputList[post.id]" />
         <button @click="commentClick(post.id)">Comment</button>
         <button @click="likeClick(post.id)">Like</button>
       </div>
@@ -44,6 +44,7 @@ export default {
       listPost: [],
       data: {},
       inputComment: "",
+      inputList: {},
       user: {},
     };
   },
@@ -63,10 +64,10 @@ export default {
           .collection("users")
           .doc(uid)
           .get();
+        console.log("query", querySnapshot.data());
         if (querySnapshot) {
           this.user = {
             ...querySnapshot.data(),
-            id: uid,
           };
           console.log(this.user);
         }
@@ -82,6 +83,13 @@ export default {
       });
     },
     async createPost() {
+      console.log("user", this.user);
+      console.log({
+        img: this.data.img,
+        content: this.data.content,
+        userid: this.user.id,
+        useravatar: this.user.URL,
+      });
       if (this.data.img && this.data.content) {
         const querySnapshot = await firebase
           .firestore()
@@ -90,36 +98,42 @@ export default {
             img: this.data.img,
             content: this.data.content,
             userid: this.user.id,
-            useravatar: this.user.avatar,
-          })
-          .then((res) => {
-            this.getPost();
+            useravatar: this.user.URL,
           });
+
+        if (querySnapshot) {
+          this.data.img = "";
+          this.data.content = "";
+          this.getPost();
+        }
       }
     },
     async commentClick(id) {
-      let selectedPost = this.listPost.find((post) => post.id === id);
-      if (selectedPost) {
-        await firebase
-          .firestore()
-          .collection("post")
-          .doc(selectedPost.id)
-          .update({
-            comments: [
-              ...(selectedPost.comments != null
-                ? [...selectedPost.comments]
-                : []),
-              {
-                username: this.user.name,
-                useravatar: this.user.avatar,
-                userid: this.user.id,
-                comment: this.inputComment,
-              },
-            ],
-          })
-          .then((res) => {
-            this.getPost();
-          });
+      if (this.inputList[id]) {
+        let selectedPost = this.listPost.find((post) => post.id === id);
+        if (selectedPost) {
+          await firebase
+            .firestore()
+            .collection("post")
+            .doc(selectedPost.id)
+            .update({
+              comments: [
+                ...(selectedPost.comments != null
+                  ? [...selectedPost.comments]
+                  : []),
+                {
+                  username: this.user.name,
+                  useravatar: this.user.URL,
+                  userid: this.user.id,
+                  comment: this.inputList[id],
+                },
+              ],
+            })
+            .then((res) => {
+              this.inputList[id] = "";
+              this.getPost();
+            });
+        }
       }
     },
     async likeClick(id) {

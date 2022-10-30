@@ -154,6 +154,14 @@ export default {
       }
     },
   },
+  created() {
+    console.log("created");
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user == null) {
+        this.$router.push("/login");
+      }
+    });
+  },
 };
 </script>
 

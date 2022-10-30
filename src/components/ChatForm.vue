@@ -21,6 +21,7 @@
         </button>
       </div>
       <div style="height: 1px; border-bottom: 1px solid #00388b"></div>
+
       <ul class="list-unstyled components">
         <li
           class="active mb-3"
@@ -35,7 +36,16 @@
           >
             <div style="width: 30%">
               <img
+                v-if="item.URL"
                 :src="item.URL"
+                alt="user"
+                width="50px"
+                height="50px"
+                style="border-radius: 50%; background: white"
+              />
+              <img
+                v-else
+                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                 alt="user"
                 width="50px"
                 height="50px"
@@ -87,7 +97,7 @@ export default {
     return {
       currentUserName: localStorage.getItem("name"),
       currentPeerUser: null,
-      currentUserId: localStorage.getItem("id"),
+      currentUserId: localStorage.getItem("uid"),
       currentUserPhoto: localStorage.getItem("photoURL"),
       searchUsers: [],
       photoURL: localStorage.getItem("photoURL"),

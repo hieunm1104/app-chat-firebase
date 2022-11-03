@@ -6,13 +6,16 @@
       <input v-model="data.img" type="text" />
       <label for="">content</label>
       <input v-model="data.content" type="text" />
-      <button @click="createPost">dang bai</button>
+      <button @click="createPost">Post</button>
     </div>
     <div class="post" v-for="(post, index) in listPost" :key="index">
-      <div class="post-username">{{ post.username }}</div>
-      <img class="post-image" :src="post.img" />
+      <div class="post-user">
+        <img class="post-img" :src="post.useravatar" alt="" />
+        <div class="post-username">{{ post.username }}</div>
+      </div>
       <span class="post-content"> {{ post.content }}</span>
-      <img class="post-img" :src="user.avatar" alt="" />
+      <img class="post-image" :src="post.img" />
+
       <div class="post-likelist" v-if="post.likeList">
         <div v-for="(like, i) in post.likeList" :key="i">
           <div>{{ like.username }},</div>
@@ -27,7 +30,7 @@
           <div>{{ comment.comment }}</div>
         </div>
       </div>
-      <div>
+      <div class="likeComment">
         <input type="text" v-model="inputList[post.id]" />
         <button @click="commentClick(post.id)">Comment</button>
         <button @click="likeClick(post.id)">Like</button>
@@ -79,8 +82,12 @@ export default {
       this.listPost = [];
       const querySnapshot = await firebase.firestore().collection("post").get();
       querySnapshot.forEach((doc) => {
-        this.listPost.push({ ...doc.data(), id: doc.id });
+        this.listPost.push({
+          ...doc.data(),
+          id: doc.id,
+        });
       });
+      console.log("list post", this.listPost);
     },
     async createPost() {
       console.log("user", this.user);
@@ -99,6 +106,7 @@ export default {
             content: this.data.content,
             userid: this.user.id,
             useravatar: this.user.URL,
+            username: this.user.name,
           });
 
         if (querySnapshot) {
@@ -153,7 +161,7 @@ export default {
           listLike.push({
             userid: this.user.id,
             username: this.user.name,
-            useravatar: this.user.avatar,
+            useravatar: this.user.URL,
           });
           console.log("th2", listLike);
         }
@@ -162,7 +170,7 @@ export default {
           .collection("post")
           .doc(selectedPost.id)
           .update({ likeList: listLike })
-          .then((res) => {
+          .then(() => {
             this.getPost();
           });
       }
@@ -203,5 +211,15 @@ export default {
 }
 .post-img {
   width: 100px;
+}
+.post-user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.post-user img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 </style>

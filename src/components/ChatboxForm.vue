@@ -45,6 +45,7 @@
             height="30px"
           />
           <input
+            id="data"
             type="text"
             style="
               width: 85%;
@@ -135,7 +136,6 @@ export default {
               this.listMessage.push(res.doc.data());
             });
           } else {
-            console.log("call cmng 1");
             this.groupChatId = `${this.currentUserId} + ${this.currentPeerUser.id}`;
             firebase
               .firestore()
